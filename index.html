@@ -491,6 +491,47 @@
             const afterImgContainer = document.getElementById('result-after-image');
             afterImgContainer.style.backgroundImage = `url('${afterImageUrl}')`;
             document.getElementById('generation-history-container').classList.remove('hidden');
+            populateResultDetails(afterImgContainer); // This is the restored function call
+        }
+        
+        function populateResultDetails(afterImageContainer) {
+            const products = [
+                { name: 'Elegant Sofa', desc: '3-seater velvet sofa', price: '45,000', top: '70%', left: '50%' },
+                { name: 'Modern Coffee Table', desc: 'Oak wood finish', price: '12,500', top: '80%', left: '35%' },
+                { name: 'Abstract Wall Art', desc: 'Canvas print', price: '8,000', top: '30%', left: '60%' },
+            ];
+
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            afterImageContainer.innerHTML = ''; // Clear previous hotspots
+            
+            products.forEach(p => {
+                // Add heat button
+                const heatButton = document.createElement('div');
+                heatButton.className = 'heat-button flex items-center justify-center';
+                heatButton.style.top = p.top;
+                heatButton.style.left = p.left;
+                heatButton.innerHTML = `
+                    <div class="heat-button-inner"></div>
+                    <div class="heat-button-tooltip absolute -bottom-2 transform translate-y-full w-max bg-white p-2 rounded-md shadow-lg text-left text-xs sm:text-sm">
+                        <p class="font-bold">${p.name}</p>
+                        <p class="text-sm text-gray-500">${p.desc}</p>
+                        <p class="font-bold text-blue-600">Rs. ${p.price}</p>
+                    </div>`;
+                afterImageContainer.appendChild(heatButton);
+
+                // Add to product list
+                const productItem = document.createElement('div');
+                productItem.className = 'flex items-center p-2 border-b border-gray-100';
+                productItem.innerHTML = `
+                    <img src="https://placehold.co/40x40/E9EBF0/7C8498?text=🛋️" class="w-10 h-10 rounded-md" alt="product icon">
+                    <div class="ml-4 flex-grow">
+                        <p class="font-semibold text-sm">${p.name}</p>
+                        <p class="text-xs text-gray-500">${p.desc}</p>
+                    </div>
+                    <p class="ml-auto font-bold text-sm text-blue-600">Rs. ${p.price}</p>`;
+                productList.appendChild(productItem);
+            });
         }
         
         const premiumModal = document.getElementById('premium-modal');
