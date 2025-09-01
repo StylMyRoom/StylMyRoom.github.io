@@ -290,24 +290,7 @@
                             </div>
                         </div>
 
-                        <div id="post-generation-filters" class="hidden mt-4 space-y-3">
-                            <h3 class="font-semibold">Refine Results</h3>
-                            <div>
-                                <label for="style-filter" class="block text-sm font-medium text-gray-700">Style</label>
-                                <select id="style-filter" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <option>Modern</option>
-                                    <option>Minimalist</option>
-                                    <option>Bohemian</option>
-                                    <option>Industrial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="color-filter" class="block text-sm font-medium text-gray-700">Primary Color</label>
-                                <input type="color" id="color-filter" value="#3b82f6" class="mt-1 block w-full h-10 rounded-md border-gray-300">
-                            </div>
                         </div>
-
-                    </div>
                 </div>
 
                 <div class="mt-auto">
@@ -355,13 +338,13 @@
                      </div>
                      
                      <div class="my-4 py-2 border-y border-gray-200 flex items-center justify-center space-x-4">
-                         <a href="#" class="text-sm font-semibold text-blue-600 hover:underline">Luxury</a>
+                         <a href="#" id="luxury-btn" class="text-sm font-semibold text-blue-600 hover:underline">Luxury</a>
                          <span class="text-gray-300">|</span>
-                         <a href="#" class="text-sm font-semibold text-blue-600 hover:underline">Below 10K</a>
+                         <a href="#" id="below-10k-btn" class="text-sm font-semibold text-blue-600 hover:underline">Below 10K</a>
                          <span class="text-gray-300">|</span>
-                         <a href="#" class="text-sm font-semibold text-blue-600 hover:underline">RePaint</a>
+                         <a href="#" id="repaint-btn" class="text-sm font-semibold text-blue-600 hover:underline">RePaint</a>
                          <span class="text-gray-300">|</span>
-                         <a href="#" class="text-sm font-semibold text-blue-600 hover:underline">Consult</a>
+                         <a href="#" id="consult-btn" class="text-sm font-semibold text-blue-600 hover:underline">Consult</a>
                      </div>
 
                      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-2">
@@ -579,7 +562,7 @@
     <div id="premium-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg shadow-2xl w-full max-w-md text-center p-8 transform transition-all">
             <h3 class="text-2xl font-bold">Unlock Premium Features</h3>
-            <p class="mt-2 text-gray-600">Access advanced tools like RepAInt and Remodel consultations by upgrading your plan.</p>
+            <p class="mt-2 text-gray-600">Access advanced tools and filters by upgrading your plan.</p>
             <div class="mt-6 flex flex-col space-y-3">
                  <button class="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700">Explore Premium Plans</button>
                  <button id="close-premium-modal-btn" class="w-full px-4 py-2 text-gray-600 font-semibold hover:underline">Maybe Later</button>
@@ -605,7 +588,7 @@
                 targetPage.classList.add('active');
             }
             
-            // NEW: Update tool pages with selected image when switching
+            // Update tool pages with selected image when switching
             if (pageId === 'repaint-tool') {
                 updateRepaintView();
             } else if (pageId === 'remodel-tool') {
@@ -738,7 +721,6 @@
         
         function resetModalSelection() {
              modalImages.forEach(i => i.classList.remove('ring-4', 'ring-blue-500'));
-             // Keep selectedImageUrl
              confirmModalBtn.disabled = true;
         }
 
@@ -762,8 +744,7 @@
             toolResultsView.classList.remove('hidden');
             toolResultsView.style.display = 'flex';
             
-            document.getElementById('post-generation-filters').classList.remove('hidden');
-            document.getElementById('generation-history-container').style.display = 'none';
+            document.getElementById('generation-history-container').style.display = 'block';
 
             const beforeImg = document.getElementById('result-before-image');
             const afterImg = document.getElementById('result-after-image');
@@ -807,9 +788,36 @@
         const remodelUpsell = document.getElementById('remodel-upsell');
         const closePremiumBtn = document.getElementById('close-premium-modal-btn');
         
-        repaintUpsell.addEventListener('click', () => premiumModal.classList.remove('hidden'));
-        remodelUpsell.addEventListener('click', () => premiumModal.classList.remove('hidden'));
+        repaintUpsell.addEventListener('click', () => showPage('repaint-tool'));
+        remodelUpsell.addEventListener('click', () => showPage('remodel-tool'));
         closePremiumBtn.addEventListener('click', () => premiumModal.classList.add('hidden'));
+
+        // --- NEW: Result Filter Button Logic ---
+        const luxuryBtn = document.getElementById('luxury-btn');
+        const below10kBtn = document.getElementById('below-10k-btn');
+        const repaintBtn = document.getElementById('repaint-btn');
+        const consultBtn = document.getElementById('consult-btn');
+
+        luxuryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            premiumModal.classList.remove('hidden');
+        });
+
+        below10kBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            premiumModal.classList.remove('hidden');
+        });
+
+        repaintBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('repaint-tool');
+        });
+        
+        consultBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('remodel-tool');
+        });
+
 
         // --- NEW: RepAInt Tool Logic ---
         const colorPalette = document.getElementById('color-palette');
@@ -819,11 +827,9 @@
             const swatch = e.target.closest('.color-swatch');
             if (!swatch) return;
             
-            // Update active state
             colorPalette.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
             swatch.classList.add('active');
 
-            // Apply color to overlay
             const color = swatch.dataset.color;
             repaintImageOverlay.style.backgroundColor = color;
         });
