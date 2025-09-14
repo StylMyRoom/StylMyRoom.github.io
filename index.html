@@ -763,7 +763,22 @@
         remodelNormalBtn.addEventListener('click', runRemodelGeneration);
 
         // --- General View Updaters ---
-        function updateRepaintView() { /* ... same as before ... */ }
+        function updateRepaintView() { 
+            const repaintInitialView = document.getElementById('repaint-initial-view');
+            const repaintPreviewView = document.getElementById('repaint-preview-view');
+            const repaintPhotoState = document.getElementById('repaint-photo-state');
+            if (selectedImageUrl) {
+                repaintInitialView.style.display = 'none';
+                repaintPreviewView.classList.remove('hidden');
+                repaintPhotoState.classList.remove('hidden');
+                document.getElementById('repaint-image-preview').src = selectedImageUrl;
+                document.getElementById('repaint-thumbnail-preview').src = selectedImageUrl;
+            } else {
+                repaintInitialView.style.display = 'block';
+                repaintPreviewView.classList.add('hidden');
+                repaintPhotoState.classList.add('hidden');
+            }
+        }
         function updateRemodelView() { 
              const remodelInitialView = document.getElementById('remodel-initial-view');
              const remodelContentView = document.getElementById('remodel-content-view');
@@ -774,7 +789,7 @@
                  remodelContentView.style.display = 'flex';
                  remodelPhotoState.classList.remove('hidden');
 
-                 remodelContentView.inneraHTML = `
+                 remodelContentView.innerHTML = `
                     <div class="w-full">
                         <div class="bg-white rounded-lg shadow-inner border p-4 mb-6">
                             <h3 class="font-bold text-lg mb-2">Your Space for Remodel</h3>
